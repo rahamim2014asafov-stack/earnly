@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CATEGORIES, OPPORTUNITIES } from "@/lib/data";
+import { comparePay, meetsMinimumPay, PAY_COMPARISON_HELP } from "@/lib/pay";
 import { useApp } from "@/lib/store";
 import type { Opportunity, OpportunityKind, WorkMode } from "@/lib/types";
 import { OpportunityCard } from "./cards";
@@ -41,7 +42,7 @@ export function Browse({
     let out = pool.filter((o) => {
       if (cat !== "All" && o.category !== cat) return false;
       if (mode !== "All" && o.mode !== mode) return false;
-      if (minPay > 0 && o.pay.amount < minPay) return false;
+      if (!meetsMinimumPay(o.pay, minPay)) return false;
       if (savedOnly && !saved.includes(o.id)) return false;
       if (t && !`${o.title} ${o.org} ${o.skills.join(" ")} ${o.summary}`.toLowerCase().includes(t))
         return false;
@@ -50,7 +51,7 @@ export function Browse({
     out = [...out].sort((a, b) => {
       if (sort === "match") return b.match - a.match;
       if (sort === "newest") return a.postedDaysAgo - b.postedDaysAgo;
-      return b.pay.amount - a.pay.amount;
+      return comparePay(a, b);
     });
     return out;
   }, [pool, q, cat, mode, minPay, sort, savedOnly, saved]);
@@ -92,7 +93,7 @@ export function Browse({
           >
             <option value="match">Best match</option>
             <option value="newest">Newest first</option>
-            <option value="pay">Highest pay</option>
+            <option value="pay">Highest pay (USD/day equivalent)</option>
           </select>
 
           <button
@@ -138,7 +139,7 @@ export function Browse({
         <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-rule pt-3 text-[12.5px] text-ink3">
           <span className="inline-flex items-center gap-2">
             <Icon name="filter" size={14} />
-            Minimum pay
+            Minimum pay (USD/day equivalent)
           </span>
           {[0, 25, 50, 100].map((p) => (
             <button
@@ -155,6 +156,7 @@ export function Browse({
             {results.length} result{results.length === 1 ? "" : "s"}
           </span>
         </div>
+        <p className="mt-2 text-[12px] text-ink3">{PAY_COMPARISON_HELP}</p>
       </div>
 
       {results.length === 0 ? (
