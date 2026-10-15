@@ -12,6 +12,7 @@ import {
   runSearch,
 } from "@/lib/ai";
 import { AI_SOURCES, TASK_TYPES } from "@/lib/data";
+import { PAY_COMPARISON_HELP } from "@/lib/pay";
 import { SkillsPicker } from "@/components/SkillsPicker";
 import { useApp } from "@/lib/store";
 import type { AiPrefs, AiResult } from "@/lib/types";
@@ -34,7 +35,7 @@ export default function AiFinderPage() {
       { title: "What kind of opportunities do you want?", hint: "You can change this any time." },
       { title: "What small tasks are you willing to do?", hint: "Physical and local work counts too." },
       { title: "Where can you work?", hint: "Distance and remote answers filter the results." },
-      { title: "How much do you want to earn?", hint: "A floor, not a ceiling." },
+      { title: "How much do you want to earn?", hint: PAY_COMPARISON_HELP },
       { title: "When are you available?", hint: "Used to rank work that fits your week." },
     ],
     []
@@ -188,7 +189,7 @@ export default function AiFinderPage() {
                             : "border-rule text-ink2"
                         }`}
                       >
-                        {p === 0 ? "Any amount" : `$${p}+`}
+                        {p === 0 ? "Any amount" : `$${p}+/day equivalent`}
                       </button>
                     ))}
                   </div>
@@ -261,7 +262,7 @@ export default function AiFinderPage() {
             <Summary label="Where" values={[prefs.radius]} />
             <Summary
               label="Pay"
-              values={[prefs.minPay === 0 ? "Any amount" : `$${prefs.minPay}+`]}
+              values={[prefs.minPay === 0 ? "Any amount" : `$${prefs.minPay}+/day equivalent`]}
             />
             <Summary label="Available" values={prefs.availability} />
           </aside>
