@@ -1,4 +1,5 @@
 import { OPPORTUNITIES } from "./data";
+import { meetsMinimumPay } from "./pay";
 import type { AiPrefs, AiResult, Opportunity } from "./types";
 
 /**
@@ -86,12 +87,7 @@ export const DEFAULT_PREFS: AiPrefs = {
 };
 
 function payMeetsPrefs(o: Opportunity, prefs: AiPrefs) {
-  if (prefs.minPay <= 0) return true;
-  // Compare like with like: only fixed/one-off sums can be tested against a
-  // single minimum. Rates are shown, not filtered, until pay normalisation
-  // exists server-side.
-  if (o.pay.unit !== "fixed") return true;
-  return o.pay.amount >= prefs.minPay;
+  return meetsMinimumPay(o.pay, prefs.minPay);
 }
 
 function radiusMeetsPrefs(o: Opportunity, prefs: AiPrefs) {
@@ -139,8 +135,8 @@ export function runSearch(prefs: AiPrefs): AiResult[] {
     if (skillsMatched.length) why.push(`Matches your ${skillsMatched.join(" and ")} skill`);
     if (o.mode === "Remote") why.push("Remote, so it fits around lectures");
     if (o.mode === "On campus") why.push("On campus, walk there between classes");
-    if (prefs.minPay > 0 && o.pay.unit === "fixed" && o.pay.amount >= prefs.minPay)
-      why.push(`Pays above your ${prefs.minPay} minimum`);
+    if (prefs.minPay > 0 && payMeetsPrefs(o, prefs))
+      why.push(`Meets your $${prefs.minPay}/day equivalent minimum`);
     if (prefs.availability.includes("Weekends") && /saturday|weekend/i.test(o.description))
       why.push("Happens at the weekend");
     if (o.kind === "internship") why.push("Internship: converts to real experience");
