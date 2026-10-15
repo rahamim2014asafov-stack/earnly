@@ -32,6 +32,22 @@ npm run wallet:live-check
 Node 20.9+ (Next.js 16 requirement). Fonts are self-hosted in `public/fonts`,
 so the build does not need network access.
 
+### Comparing opportunity pay
+
+Browse's minimum-pay filters and highest-pay sort, and the AI Finder's minimum
+and pay explanations, share a **USD per working day equivalent**. `25+` and
+`50+` include listings at exactly $25 and $50 on that comparison scale.
+Assumptions: 8 hours per day, 5 working days per week, and 20 working days per
+month; a fixed task is counted as one working day because its actual hours are
+unknown. These are comparison estimates, not promised daily earnings or inferred
+workload. Card amounts and their original unit labels are unchanged.
+
+For example, $150 fixed → $150/day equivalent, $15/hour → $120/day,
+$200/week → $40/day, and $500/month → $25/day. The $15/hour listing therefore
+passes `50+`; the $500/month listing passes `25+` but not `50+`. The same
+assumptions apply to every listing kind. The current demo dataset is USD-based;
+this helper does not perform currency conversion.
+
 ### Environment variables
 
 Copy the shape below into `.env.local` for development, and set the same keys
